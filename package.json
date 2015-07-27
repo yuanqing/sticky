@@ -1,0 +1,27 @@
+{
+  "name": "@yuanqing/sticky",
+  "version": "0.0.0",
+  "description": "Sticky headings in a scrollable element.",
+  "author": "Lim Yuan Qing",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/yuanqing/sticky.git"
+  },
+  "main": "sticky.js",
+  "devDependencies": {
+    "jshint": "^2.8.0",
+    "uglify-js": "^2.4.24"
+  },
+  "scripts": {
+    "start": "npm run dist && open 'http://localhost:4242/example/'; ecstatic --port 4242",
+    "lint": "jshint --verbose sticky.js",
+    "dist": "uglifyjs sticky.js --mangle --output sticky.min.js",
+    "build": "npm run lint && npm run dist"
+  },
+  "keywords": [
+    "browser",
+    "sticky",
+    "window"
+  ]
+}
