@@ -2,8 +2,8 @@
 
   'use strict';
 
-  function computeHeight(elem) {
-    return parseInt(root.getComputedStyle(elem).height, 10);
+  function computeDimension(elem, computeWidth) {
+    return parseInt(root.getComputedStyle(elem)[computeWidth ? 'width' : 'height'], 10);
   }
 
   function Sticky(elem, opts) {
@@ -18,10 +18,12 @@
     // DOM elements.
     self.elem = elem;
     elem.style.position = 'relative';
-    var stuckElem =self.stuckElem = elem.querySelector(opts.stuckSelector || '.sticky__stuck');
+    var stuckElem = self.stuckElem = elem.querySelector(opts.stuckSelector ||
+      '.sticky__stuck');
     stuckElem.style.position = 'absolute';
-    var contentElem = self.contentElem = elem.querySelector(opts.contentSelector || '.sticky__content');
-    contentElem.style.overflow = 'auto';
+    self.contentElem = elem.querySelector(opts.contentSelector ||
+      '.sticky__content');
+    self.contentElem.style.overflow = 'auto';
 
     // Initialise.
     self.itemSelector = opts.itemSelector || '.sticky__item';
@@ -36,37 +38,43 @@
 
   Sticky.prototype.scroll = function() {
 
-    // Hide all the `clonedElems`.
     var self = this;
-    var i = -1;
     var len = self.clonedElems.length;
-    while (++i < len) {
-      self.clonedElems[i].style.display = 'none';
-    }
+    var i;
 
     // Compute how much we've scrolled in `contentElem`.
     var scrollTop = self.contentElem.scrollTop;
 
     // Determine the index of the element in `clonedElems` to show.
     var indexToShow = -1;
-    var j = len;
-    while (j-- > 0) {
-      if (scrollTop >= self.offsets[j]) {
-        indexToShow = j;
+    i = len;
+    while (i-- > 0) {
+      if (scrollTop >= self.offsets[i]) {
+        indexToShow = i;
         break;
       }
     }
 
-    if (indexToShow !== -1) {
-      if (indexToShow > 0) {
-        // In this case, 2 items in `clonedElems` are shown. Here we show the
-        // the element in `clonedElems` at index `indexToShow` - 1, and adjust
-        // the `top` position if needed.
-        var top = Math.min(scrollTop - self.offsets[indexToShow], self.heights[indexToShow - 1]);
-        console.log(top, indexToShow);
-        self.clonedElems[indexToShow - 1].style.display = 'block';
-        self.stuckElem.style.top = (-1 * top) + 'px';
+    i = -1;
+    while (++i < len) {
+      if (i == indexToShow || i == indexToShow - 1) {
+        continue;
       }
+      self.clonedElems[i].style.display = 'none';
+    }
+
+    if (indexToShow !== -1) {
+      var top = '0px';
+      if (indexToShow > 0) {
+        // In this case, two items in `clonedElems` are shown. Show the
+        // the element in `clonedElems` at index `indexToShow` - 1, and compute
+        // the `top` position for `stuckElem`.
+        self.clonedElems[indexToShow - 1].style.display = 'block';
+        top = (-1 * Math.min(scrollTop - self.offsets[indexToShow],
+          self.heights[indexToShow - 1])) + 'px';
+      }
+      // Adjust the `top` position of `stuckElem`.
+      self.stuckElem.style.top = top;
       // Show the element in `clonedElems` at `indexToShow`.
       self.clonedElems[indexToShow].style.display = 'block';
     }
@@ -89,14 +97,18 @@
     // Cloned versions of each element in `itemElems`.
     self.clonedElems = [];
 
+    // Empty `stuckElem`.
+    self.stuckElem.innerHTML = '';
+
     var i = -1;
     var len = self.itemElems.length;
     while (++i < len) {
       // Height.
-      var height = computeHeight(self.itemElems[i]);
+      var height = computeDimension(self.itemElems[i]);
       self.heights.push(height);
       // Offset.
-      self.offsets.push(self.itemElems[i].offsetTop - (self.heights[i - 1] || 0));
+      self.offsets.push(self.itemElems[i].offsetTop -
+        (self.heights[i - 1] || 0));
       // Cloned element.
       var clonedElem = self.itemElems[i].cloneNode(true);
       clonedElem.style.display = 'none';
