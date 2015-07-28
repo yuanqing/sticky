@@ -2,8 +2,8 @@
 
   'use strict';
 
-  function computeDimension(elem, computeWidth) {
-    return parseInt(root.getComputedStyle(elem)[computeWidth ? 'width' : 'height'], 10);
+  function computeHeight(elem) {
+    return parseInt(root.getComputedStyle(elem).height, 10);
   }
 
   function Sticky(elem, opts) {
@@ -15,12 +15,15 @@
       return new Sticky(elem, opts);
     }
 
-    // DOM elements.
-    self.elem = elem;
+    // The containing `elem`.
     elem.style.position = 'relative';
-    var stuckElem = self.stuckElem = elem.querySelector(opts.stuckSelector ||
+
+    // `stuckElem`.
+    self.stuckElem = elem.querySelector(opts.stuckSelector ||
       '.sticky__stuck');
-    stuckElem.style.position = 'absolute';
+    self.stuckElem.style.position = 'absolute';
+
+    // `contentElem`.
     self.contentElem = elem.querySelector(opts.contentSelector ||
       '.sticky__content');
     self.contentElem.style.overflow = 'auto';
@@ -35,6 +38,49 @@
     });
 
   }
+
+  Sticky.prototype.init = function() {
+
+    var self = this;
+
+    // Recompute `itemElems`.
+    self.itemElems = [].slice.call(document.querySelectorAll(self.itemSelector));
+
+    // Heights of each element in `itemElems`.
+    self.heights = [];
+
+    // Cloned versions of each element in `itemElems`.
+    self.clonedElems = [];
+
+    // The `scrollTop` at which the element will start to be stuck.
+    self.offsets = [];
+
+    // Empty `stuckElem`.
+    self.stuckElem.innerHTML = '';
+
+    var i = -1;
+    var len = self.itemElems.length;
+    while (++i < len) {
+      // Heights.
+      var height = computeHeight(self.itemElems[i]);
+      self.heights.push(height);
+      // Offsets.
+      self.offsets.push(self.itemElems[i].offsetTop -
+        (self.heights[i - 1] || 0));
+      // Clone the item at index `i` of `itemElems`.
+      var clonedElem = self.itemElems[i].cloneNode(true);
+      clonedElem.style.display = 'none';
+      clonedElem.style.height = height;
+      // Remove the `id` attribute from the cloned element.
+      clonedElem.removeAttribute('id');
+      self.clonedElems.push(clonedElem);
+      self.stuckElem.appendChild(clonedElem);
+    }
+
+    // Call the `scroll` handler once the above members have been initialised.
+    self.scroll();
+
+  };
 
   Sticky.prototype.scroll = function() {
 
@@ -55,6 +101,7 @@
       }
     }
 
+    // Hide all elements not at indices `indexToShow` and `indexToShow - 1`.
     i = -1;
     while (++i < len) {
       if (i == indexToShow || i == indexToShow - 1) {
@@ -67,8 +114,8 @@
       var top = '0px';
       if (indexToShow > 0) {
         // In this case, two items in `clonedElems` are shown. Show the
-        // the element in `clonedElems` at index `indexToShow` - 1, and compute
-        // the `top` position for `stuckElem`.
+        // element at index `indexToShow - 1` of `clonedElems`, and compute
+        // the `top` position of `stuckElem`.
         self.clonedElems[indexToShow - 1].style.display = 'block';
         top = (-1 * Math.min(scrollTop - self.offsets[indexToShow],
           self.heights[indexToShow - 1])) + 'px';
@@ -78,47 +125,6 @@
       // Show the element in `clonedElems` at `indexToShow`.
       self.clonedElems[indexToShow].style.display = 'block';
     }
-
-  };
-
-  Sticky.prototype.init = function() {
-
-    var self = this;
-
-    // Recompute `itemElems`.
-    self.itemElems = [].slice.call(document.querySelectorAll(self.itemSelector));
-
-    // Heights of each element in `itemElems`.
-    self.heights = [];
-
-    // The vertical scroll at which the element will start to be stuck.
-    self.offsets = [];
-
-    // Cloned versions of each element in `itemElems`.
-    self.clonedElems = [];
-
-    // Empty `stuckElem`.
-    self.stuckElem.innerHTML = '';
-
-    var i = -1;
-    var len = self.itemElems.length;
-    while (++i < len) {
-      // Height.
-      var height = computeDimension(self.itemElems[i]);
-      self.heights.push(height);
-      // Offset.
-      self.offsets.push(self.itemElems[i].offsetTop -
-        (self.heights[i - 1] || 0));
-      // Cloned element.
-      var clonedElem = self.itemElems[i].cloneNode(true);
-      clonedElem.style.display = 'none';
-      clonedElem.style.height = height;
-      self.clonedElems.push(clonedElem);
-      self.stuckElem.appendChild(clonedElem);
-    }
-
-    // Call the `scroll` handler once the above members have been initialised.
-    self.scroll();
 
   };
 
