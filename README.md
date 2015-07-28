@@ -4,12 +4,12 @@
 
 ## Features
 
-- Define custom selectors for the scrollable element, and the items to make sticky, and the element to hold the &ldquo;stuck&rdquo; items
+- Define custom selectors for the scrollable element, the items to make sticky, and the element to hold the &ldquo;stuck&rdquo; items
 - Zero dependencies; 1.5 KB [minified](sticky.min.js) or 0.7 KB minified and gzipped
 
 ## Usage
 
-> [**Editable demo**](http://jsfiddle.net/m4zmka6q/)
+> [**Editable demo**](http://jsfiddle.net/3ssst5u0/)
 
 ```html
 <!DOCTYPE html>
@@ -61,13 +61,15 @@ var sticky = require('@yuanqing/sticky');
 
   Key | Description | Default
   :--|:--|:--
-  `stuckSelector` | Selector for the element to hold the &ldquo;stuck&rdquo; items | `.sticky__stuck`
   `contentSelector` | Selector for the scrollable element | `.sticky__content`
-  `itemSelector` | Clicking on elements that match this selector will show the sticky | `.sticky__item`
+  `itemSelector` | Selector for items we want to make sticky | `.sticky__item`
+  `stuckSelector` | Selector for the element to hold the &ldquo;stuck&rdquo; items | `.sticky__stuck`
 
-### m.init()
+### s.init()
 
-Re-initialise the component ie. recomputes the items we want to make sticky, and so on. This is uesful if changes were made to the contents of the given `elem`.
+Re-initialise the component ie. recomputes the items we want to make sticky, and so on. This is uesful if any changes were made to the contents of the given `elem`.
+
+This method is called internally when `stiky` is first called.
 
 ## Installation
 
