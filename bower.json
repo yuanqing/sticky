@@ -1,12 +1,12 @@
 {
-  "name": "modal",
-  "main": "modal.min.js",
-  "version": "0.1.0",
-  "homepage": "https://github.com/yuanqing/modal",
+  "name": "sticky",
+  "main": "sticky.min.js",
+  "version": "0.0.0",
+  "homepage": "https://github.com/yuanqing/sticky",
   "authors": [
     "Lim Yuan Qing"
   ],
-  "description": "Super-simple modals in vanilla JavaScript.",
+  "description": "Sticky items in a scrollable DOM element.",
   "license": "MIT",
   "ignore": [
     "**/.*",

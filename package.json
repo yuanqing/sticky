@@ -1,7 +1,7 @@
 {
   "name": "@yuanqing/sticky",
   "version": "0.0.0",
-  "description": "Sticky headings in a scrollable element.",
+  "description": "Sticky items in a scrollable DOM element.",
   "author": "Lim Yuan Qing",
   "license": "MIT",
   "repository": {
