@@ -67,9 +67,11 @@ var sticky = require('@yuanqing/sticky');
 
 ### s.init()
 
-Re-initialise the component ie. recomputes the items we want to make sticky, and so on. This is uesful if any changes were made to the contents of the given `elem`.
+Re-initialises the component, ie. recomputes the items we want to make sticky. This is uesful if any changes were made to the contents of the given `elem`.
 
-This method is called internally when `stiky` is first called.
+## Limitations
+
+- Do not use an `id` attribute to style elements that match the `itemSelector`. (It is okay to add an `id` to these elements as a [fragment identifier](https://en.wikipedia.org/wiki/Fragment_identifier).)
 
 ## Installation
 
@@ -87,7 +89,7 @@ $ bower i --save yuanqing/sticky
 
 ## Changelog
 
-- 0.0.1
+- 0.1.0
   - Initial release
 
 ## License
