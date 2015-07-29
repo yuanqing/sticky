@@ -18,12 +18,12 @@
     // The containing `elem`.
     elem.style.position = 'relative';
 
-    // `stuckElem`.
+    // The `stuckElem`.
     self.stuckElem = elem.querySelector(opts.stuckSelector ||
       '.sticky__stuck');
     self.stuckElem.style.position = 'absolute';
 
-    // `contentElem`.
+    // The `contentElem`.
     self.contentElem = elem.querySelector(opts.contentSelector ||
       '.sticky__content');
     self.contentElem.style.overflow = 'auto';
@@ -46,7 +46,7 @@
     // Recompute `itemElems`.
     self.itemElems = [].slice.call(document.querySelectorAll(self.itemSelector));
 
-    // Heights of each element in `itemElems`.
+    // Height of each element in `itemElems`.
     self.heights = [];
 
     // Cloned versions of each element in `itemElems`.
@@ -69,8 +69,7 @@
         (self.heights[i - 1] || 0));
       // Clone the item at index `i` of `itemElems`.
       var clonedElem = self.itemElems[i].cloneNode(true);
-      clonedElem.style.display = 'none';
-      clonedElem.style.height = height;
+      clonedElem.style.cssText = 'display:none;height:' + height;
       // Remove the `id` attribute from the cloned element.
       clonedElem.removeAttribute('id');
       self.clonedElems.push(clonedElem);
@@ -86,14 +85,13 @@
 
     var self = this;
     var len = self.clonedElems.length;
-    var i;
 
     // Compute how much we've scrolled in `contentElem`.
     var scrollTop = self.contentElem.scrollTop;
 
     // Determine the index of the element in `clonedElems` to show.
     var indexToShow = -1;
-    i = len;
+    var i = len;
     while (i-- > 0) {
       if (scrollTop >= self.offsets[i]) {
         indexToShow = i;
@@ -103,11 +101,11 @@
 
     // Hide all elements not at indices `indexToShow` and `indexToShow - 1`.
     i = -1;
+    var prevIndexToShow = indexToShow - 1;
     while (++i < len) {
-      if (i == indexToShow || i == indexToShow - 1) {
-        continue;
+      if (i !== indexToShow && i !== prevIndexToShow) {
+        self.clonedElems[i].style.display = 'none';
       }
-      self.clonedElems[i].style.display = 'none';
     }
 
     if (indexToShow !== -1) {
